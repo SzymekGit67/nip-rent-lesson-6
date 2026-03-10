@@ -22,3 +22,11 @@ def test_tenants_in_manager():
     names = [tenant.name for tenant in manager.tenants.values()]
     for tenant in ['Jan Nowak', 'Adam Kowalski', 'Ewa Adamska']:
         assert tenant in names
+
+def test_if_tenants_have_valid_apartment_keys():
+    parameters = Parameters()
+    manager = Manager(parameters)
+    assert manager.check_tenants_apartment_keys() == True
+
+    manager.tenants['tenant-1'].apartment = 'invalid-key'
+    assert manager.check_tenants_apartment_keys() == False
