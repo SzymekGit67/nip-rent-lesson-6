@@ -71,4 +71,63 @@ class Manager:
             )
         for tenant in tenants_in_apartment ] 
     
+
+    def dluznicy(self, year: int, month: int) -> list:
+        debtors = []
+        for apartment_key in self.apartments:
+            apartment_settlement = self.get_settlement(apartment_key, year, month)
+            if not apartment_settlement:
+                continue
+
+            tenant_settlements = self.create_tenants_settlements(apartment_settlement)
+            if not tenant_settlements:
+                continue
+            for ts in tenant_settlements:
+                tenant_key = None
+                tenant_obj = None
+                for key, tenant in self.tenants.items():
+                    if tenant.name == ts.tenant:
+                        tenant_key = key
+                        tenant_obj = tenant
+                        break
+
+                if not tenant_obj:
+                    continue
+
+                total_expected = tenant_obj.rent_pln + ts.total_due_pln
+                total_paid = sum(
+                    transfer.amount_pln
+                    for transfer in self.transfers
+                    if transfer.tenant == tenant_key 
+                    and transfer.settlement_year == year 
+                    and transfer.settlement_month == month
+                )
+
+                if total_paid < total_expected - 0.01:
+                    debtors.append({
+                        'name': tenant_obj.name,
+                        'expected_pln': total_expected,
+                        'paid_pln': total_paid,
+                        'debt_pln': total_expected - total_paid
+                    })
+    
+        return debtors
+    
+    def get_annual_summary(self, year: int) -> dict:
+        total_costs = sum(
+            bill.amount_pln 
+            for bill in self.bills 
+            if bill.settlement_year == year
+        )
+        
+        total_incomes = sum(
+            transfer.amount_pln 
+            for transfer in self.transfers 
+            if transfer.settlement_year == year
+        )
+
+        return {
+            "total_costs_pln": total_costs,
+            "total_incomes_pln": total_incomes
+        }
     

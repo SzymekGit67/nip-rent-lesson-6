@@ -17,3 +17,21 @@ def test_czy_suma_sie_zgadza_z_mieszkania():
 
     assert total_tenants_due == pytest.approx(apartment_settlement.total_due_pln), \
         f"Suma obciążeń lokatorów ({total_tenants_due}) nie zgadza się z kosztem mieszkania ({apartment_settlement.total_due_pln})"
+    
+def test_dluznicy():
+        manager = Manager(Parameters())
+        debtors = manager.dluznicy(year=2025, month=1)
+        assert isinstance(debtors, list), "Metoda powinna zwracać listę dłużników."
+        assert len(debtors) == 0, "Przy wpłatach 2500 PLN lista dłużników za styczeń 2025 powinna być pusta."
+
+def test_get_annual_summary():
+    manager = Manager(Parameters())
+    
+    summary = manager.get_annual_summary(year=2025)
+    
+    assert isinstance(summary, dict), "Raport roczny powinien być słownikiem."
+    assert "total_costs_pln" in summary, "Raport powinien zawierać całkowite koszty (rachunki mieszkania)."
+    assert "total_incomes_pln" in summary, "Raport powinien zawierać całkowite przychody (wpłaty od lokatorów)."
+    
+    assert summary["total_costs_pln"] == 910.0, "Koszty dla 2025 roku powinny wynosić 910 PLN."
+    assert summary["total_incomes_pln"] == 7500.0, "Wpłaty dla 2025 roku powinny wynosić 7500 PLN."
