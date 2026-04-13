@@ -2,7 +2,7 @@ import pytest
 from src.manager import Manager
 from src.models import Parameters
 
-def czy_suma_sie_zgadza_z_mieszkania():
+def test_czy_suma_sie_zgadza_z_mieszkania():
     manager = Manager(Parameters())
     apartment_key = 'apart-polanka'
     year = 2025
