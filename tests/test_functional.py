@@ -35,3 +35,19 @@ def test_get_annual_summary():
     
     assert summary["total_costs_pln"] == 910.0, "Koszty dla 2025 roku powinny wynosić 910 PLN."
     assert summary["total_incomes_pln"] == 7500.0, "Wpłaty dla 2025 roku powinny wynosić 7500 PLN."
+
+def test_get_tax():
+    manager = Manager(Parameters())
+    tax = manager.get_tax(year=2025, month=1, tax_rate=0.085)
+
+    assert isinstance(tax, int), "Podatek powinien być zaokrąglony do pełnych złotych (typ int)."
+    assert tax == 638, "Podatek od 7500 PLN przy stawce 8.5% powinien wynosić 638 PLN."
+
+def test_get_annual_report():
+    manager = Manager(Parameters())
+    
+    report = manager.get_annual_report(year=2025)
+    
+    assert isinstance(report, dict), "Raport powinien być słownikiem."
+    assert report["total_costs_pln"] == 910.0, "Koszty dla 2025 r. powinny wynosić 910 PLN."
+    assert report["total_incomes_pln"] == 7500.0, "Przychody dla 2025 r. powinny wynosić 7500 PLN."

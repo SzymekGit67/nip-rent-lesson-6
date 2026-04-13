@@ -130,4 +130,26 @@ class Manager:
             "total_costs_pln": total_costs,
             "total_incomes_pln": total_incomes
         }
-    
+    def get_tax(self, year: int, month: int, tax_rate: float) -> int:
+        total_incomes = sum(
+            transfer.amount_pln 
+            for transfer in self.transfers 
+            if transfer.settlement_year == year and transfer.settlement_month == month
+        )
+        return round(total_incomes * tax_rate)
+
+    def get_annual_report(self, year: int) -> dict:
+        total_costs = sum(
+            bill.amount_pln 
+            for bill in self.bills 
+            if bill.settlement_year == year
+        )
+        total_incomes = sum(
+            transfer.amount_pln 
+            for transfer in self.transfers 
+            if transfer.settlement_year == year
+        )
+        return {
+            "total_costs_pln": total_costs,
+            "total_incomes_pln": total_incomes
+        }
